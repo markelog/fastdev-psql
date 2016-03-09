@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import fs from 'fs';
 
-import DBuilder from 'DBuilder';
+import DBuilder from 'dbuilder';
 import chalk from 'chalk';
 import vow from 'vow';
 import { Spinner } from 'cli-spinner';
