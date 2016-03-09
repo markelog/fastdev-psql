@@ -1,3 +1,3 @@
 #!/bin/bash
 
-psql -U postgres -d serviceorderhub -f /dump.sql
+psql -U postgres -f /dump.sql
