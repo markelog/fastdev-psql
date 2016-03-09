@@ -39,28 +39,24 @@ describe('fastdev-psql', () => {
   describe('PSQL#copy', () => {
     let action;
     beforeEach(() => {
-      sinon.stub(PSQL.fs, 'createReadStream').returns({
-        pipe: sinon.stub()
-      });
-      sinon.stub(PSQL.fs, 'createWriteStream');
+      sinon.stub(PSQL, 'copy');
       action = instance.copy();
     });
 
     afterEach(() => {
-      PSQL.fs.createReadStream.restore();
-      PSQL.fs.createWriteStream.restore();
+      PSQL.copy.restore();
     });
 
     it('should return itself', () => {
       expect(action).to.equal(instance);
     });
 
-    it('should read file', () => {
-      expect(PSQL.fs.createReadStream).to.been.calledWith(instance.dump);
+    it('should have been with instance.dump', () => {
+      expect(PSQL.copy).to.been.calledWith(instance.dump);
     });
 
-    it('should write file', () => {
-      expect(PSQL.fs.createWriteStream).to.been.called;
+    it('should have been called three times', () => {
+      expect(PSQL.copy).to.been.calledTrice;
     });
   });
 

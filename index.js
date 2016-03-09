@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import fs from 'fs';
+import { copySync as copy } from 'fs-extra';
 
 import DBuilder from 'dbuilder';
 import chalk from 'chalk';
@@ -15,11 +15,11 @@ const copies = Symbol();
 
 export default class PSQL {
   /**
-   * Our own fs, so we can stub it
+   * Our own copy, so we can stub it
    * @static
    * @type {FS}
    */
-  static fs = fs;
+  static copy = copy;
 
   /**
    * Our own DBuilder, so we can stub it
@@ -112,20 +112,9 @@ export default class PSQL {
    * Copy psql dump
    */
   copy() {
-    PSQL.fs.createReadStream(this.dump)
-      .pipe(
-        fs.createWriteStream(this[copies].dump)
-      );
-
-    PSQL.fs.createReadStream(image)
-      .pipe(
-        fs.createWriteStream(this[copies].image)
-      );
-
-    PSQL.fs.createReadStream(make)
-      .pipe(
-        fs.createWriteStream(this[copies].make)
-      );
+    PSQL.copy(this.dump, this[copies].dump);
+    PSQL.copy(image, this[copies].image);
+    PSQL.copy(make, this[copies].make);
 
     return this;
   }
