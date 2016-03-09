@@ -36,15 +36,17 @@ describe('fastdev-psql', () => {
     });
   });
 
-  describe('PSQL#copy', () => {
+  describe('PSQL#prepare', () => {
     let action;
     beforeEach(() => {
       sinon.stub(PSQL, 'copy');
-      action = instance.copy();
+      sinon.stub(PSQL, 'write');
+      action = instance.prepare();
     });
 
     afterEach(() => {
       PSQL.copy.restore();
+      PSQL.write.restore();
     });
 
     it('should return itself', () => {
@@ -55,22 +57,32 @@ describe('fastdev-psql', () => {
       expect(PSQL.copy).to.been.calledWith(instance.dump);
     });
 
-    it('should have been called three times', () => {
-      expect(PSQL.copy).to.been.calledTrice;
+    it('should have been called twice times', () => {
+      expect(PSQL.copy).to.been.calledTwice;
+    });
+
+    it('should have been write make.sh', () => {
+      expect(PSQL.write).to.been.called;
+    });
+
+    it('should have been called with correct arguments', () => {
+      let target = PSQL.write.firstCall.args[1];
+      expect(target).to.equal('#!/bin/bash \n\npsql -d ' +
+        `${instance.database} -U postgres -f /dump.sql`);
     });
   });
 
   describe('PSQL#up', () => {
     let action;
     beforeEach(() => {
-      sinon.stub(instance, 'copy');
+      sinon.stub(instance, 'prepare');
       sinon.stub(instance.spin, 'start');
       sinon.stub(instance.builder, 'up').returns(new Promise(resolve => resolve()));
       action = instance.up();
     });
 
     afterEach(() => {
-      instance.copy.restore();
+      instance.prepare.restore();
       instance.spin.start.restore();
       instance.builder.up.restore();
     });
@@ -79,8 +91,8 @@ describe('fastdev-psql', () => {
       expect(action).to.have.property('then');
     });
 
-    it('should copy', () => {
-      expect(instance.copy).to.have.been.called;
+    it('should prepare', () => {
+      expect(instance.prepare).to.have.been.called;
     });
 
     it('should start spinner', () => {

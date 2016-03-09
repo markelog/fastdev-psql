@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import { copySync as copy } from 'fs-extra';
+import { writeFileSync as write } from 'fs';
 
 import DBuilder from 'dbuilder';
 import chalk from 'chalk';
@@ -8,7 +9,6 @@ import { Spinner } from 'cli-spinner';
 import { dirSync as dir } from 'tmp';
 
 const image = `${__dirname}/../images/Dockerfile`;
-const make = `${__dirname}/../images/make.sh`;
 
 const defer = Symbol();
 const copies = Symbol();
@@ -20,6 +20,13 @@ export default class PSQL {
    * @type {FS}
    */
   static copy = copy;
+
+  /**
+   * Our own write, so we can stub it
+   * @static
+   * @type {FS}
+   */
+  static write = write;
 
   /**
    * Our own DBuilder, so we can stub it
@@ -43,6 +50,12 @@ export default class PSQL {
     this.port = opts.port || 5432;
 
     /**
+     * Database name
+     * @type {String}
+     */
+    this.database = opts.db;
+
+    /**
      * Path to the sql dump
      * @type {String}
      */
@@ -55,7 +68,7 @@ export default class PSQL {
     this.envs = {
       POSTGRES_USER: process.env.POSTGRES_USER || opts.user,
       POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD || opts.password,
-      POSTGRES_DB: process.env.POSTGRES_DB || opts.db
+      POSTGRES_DB: process.env.POSTGRES_DB || this.database
     };
 
     const dirTmp = dir().name;
@@ -103,18 +116,21 @@ export default class PSQL {
    * @return {Promise}
    */
   up() {
-    this.copy();
+    this.prepare();
     this.spin.start();
     return this.builder.up().then(() => this[defer].promise());
   }
 
   /**
-   * Copy psql dump
+   * Copy dump and image, prepare make.sh
    */
-  copy() {
+  prepare() {
+    const makeTxt = `#!/bin/bash \n\npsql -d ${this.database} -U postgres -f /dump.sql`;
+
     PSQL.copy(this.dump, this[copies].dump);
     PSQL.copy(image, this[copies].image);
-    PSQL.copy(make, this[copies].make);
+
+    PSQL.write(this[copies].make, makeTxt, 'utf8');
 
     return this;
   }
