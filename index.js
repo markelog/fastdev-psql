@@ -170,7 +170,7 @@ export default class PSQL {
     });
 
     this.builder.on('data', data => {
-      if (!data.includes('PostgreSQL init process complete; ready for start up')) {
+      if (!~data.indexOf('PostgreSQL init process complete; ready for start up')) {
         return;
       }
 
