@@ -21,6 +21,13 @@ export default class PSQL {
    */
   static fs = fs;
 
+  /**
+   * Our own DBuilder, so we can stub it
+   * @static
+   * @type {FS}
+   */
+  static DBuilder = DBuilder;
+
   constructor(opts = {}) {
 
     /**

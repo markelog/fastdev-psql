@@ -26,7 +26,8 @@ describe('fastdev-psql', () => {
       expect(instance.name).to.equal('test-psql');
       expect(instance.port).to.equal(9999);
       expect(instance.dump).to.equal(`${__dirname}/fixtures/test.sql`);
-      expect(instance.builder).to.be.instanceof(DBuilder);
+
+      expect(instance.builder).to.be.instanceof(PSQL.DBuilder);
 
       expect(instance.envs).to.deep.equal({
         POSTGRES_USER: 'test-user',
