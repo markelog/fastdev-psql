@@ -3,7 +3,6 @@ import chai from 'chai';
 import sinonChai from 'sinon-chai';
 
 import PSQL from '../index.js';
-import DBuilder from 'dbuilder';
 
 chai.use(sinonChai);
 let expect = chai.expect;
