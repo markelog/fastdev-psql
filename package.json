@@ -49,7 +49,6 @@
     "chai": "^3.5.0",
     "chokidar-cli": "^1.2.0",
     "coveralls": "^2.11.8",
-    "dbuilder": "^1.0.1",
     "eslint": "2.2.0",
     "eslint-config-airbnb": "6.0.2",
     "eslint-plugin-react": "4.1.0",
