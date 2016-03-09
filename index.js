@@ -5,12 +5,13 @@ import DBuilder from 'DBuilder';
 import chalk from 'chalk';
 import vow from 'vow';
 import { Spinner } from 'cli-spinner';
-import { fileSync as file } from 'tmp';
+import { dirSync as dir } from 'tmp';
 
-const image = resolve('./images/psql.Dockerfile');
+const image = `${__dirname}/../images/Dockerfile`;
+const make = `${__dirname}/../images/make.sh`;
 
 const defer = Symbol();
-const dumpCopy = Symbol();
+const copies = Symbol();
 
 export default class PSQL {
   /**
@@ -50,6 +51,19 @@ export default class PSQL {
       POSTGRES_DB: process.env.POSTGRES_DB || opts.db
     };
 
+    const dirTmp = dir().name;
+
+    /**
+     * Path in which dockerfile and associated files will be copied
+     * @private
+     * @type {String}
+     */
+    this[copies] = {
+      dump: `${dirTmp}/dump.sql`,
+      image: `${dirTmp}/Dockerfile`,
+      make: `${dirTmp}/make.sh`
+    };
+
     /**
      * Builder instance
      * @type {DBuilder}
@@ -59,7 +73,7 @@ export default class PSQL {
       port: this.port,
       exposed: 5432,
       envs: this.envs,
-      image
+      image: this[copies].image
     });
 
     /**
@@ -70,17 +84,10 @@ export default class PSQL {
     this[defer] = vow.defer();
 
     /**
-     * Path on which copy of the dump will be stored
-     * @private
-     * @type {String}
-     */
-    this[dumpCopy] = file().name;
-
-    /**
      * Spinner instance
      * @type {Spinner}
      */
-    this.spin = new Spinner('Docking... %s');
+    this.spin = new Spinner(`${chalk.blue('>')} Docking... ${chalk.blue('%s')}`);
     this.spin.setSpinnerString('|/-\\');
   }
 
@@ -100,7 +107,17 @@ export default class PSQL {
   copy() {
     PSQL.fs.createReadStream(this.dump)
       .pipe(
-        fs.createWriteStream(this[dumpCopy])
+        fs.createWriteStream(this[copies].dump)
+      );
+
+    PSQL.fs.createReadStream(image)
+      .pipe(
+        fs.createWriteStream(this[copies].image)
+      );
+
+    PSQL.fs.createReadStream(make)
+      .pipe(
+        fs.createWriteStream(this[copies].make)
       );
 
     return this;
@@ -157,15 +174,19 @@ export default class PSQL {
     });
 
     this.builder.on('data', data => {
-      if (~data.indexOf('PostgreSQL init process complete; ready for start up')) {
-        this.spin.stop(true);
-        console.log(
-          `${chalk.green('>')}
-          Container "${this.name}"
-          ${chalk.green('started')}\n`.replace(/\s+/g, ' ')
-        );
-        this[defer].resolve();
+      if (!data.includes('PostgreSQL init process complete; ready for start up')) {
+        return;
       }
+
+      this.spin.stop(true);
+
+      console.log(
+        `${chalk.green('>')}
+        Container "${this.name}"
+        ${chalk.green('started')}\n`.replace(/\s+/g, ' ')
+      );
+
+      this[defer].resolve();
     });
 
     return this;
