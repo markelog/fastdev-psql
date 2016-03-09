@@ -1,5 +1,4 @@
 import { resolve } from 'path';
-import { stringify } from 'querystring';
 import fs from 'fs';
 
 import DBuilder from 'DBuilder';
@@ -60,7 +59,7 @@ export default class PSQL {
       port: this.port,
       exposed: 5432,
       envs: this.envs,
-      image: image
+      image
     });
 
     /**
@@ -92,9 +91,7 @@ export default class PSQL {
   up() {
     this.copy();
     this.spin.start();
-    return this.builder.up().then(() => {
-      return this[defer].promise();
-    });
+    return this.builder.up().then(() => this[defer].promise());
   }
 
   /**
@@ -130,7 +127,7 @@ export default class PSQL {
     console[type](message);
     this.spin.start();
 
-    return this
+    return this;
   }
 
   /**
@@ -162,7 +159,6 @@ export default class PSQL {
     this.builder.on('data', data => {
       if (~data.indexOf('PostgreSQL init process complete; ready for start up')) {
         this.spin.stop(true);
-        console.log(123);
         console.log(
           `${chalk.green('>')}
           Container "${this.name}"

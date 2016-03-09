@@ -31,7 +31,7 @@ describe('fastdev-psql', () => {
       expect(instance.envs).to.deep.equal({
         POSTGRES_USER: 'test-user',
         POSTGRES_PASSWORD: 'test-pass',
-        POSTGRES_DB: 'test-db',
+        POSTGRES_DB: 'test-db'
       });
     });
   });
@@ -173,7 +173,7 @@ describe('fastdev-psql', () => {
 
       afterEach(() => {
         instance.spin.stop.restore();
-      })
+      });
 
       it('should pass message to the console for "complete" event', () => {
         expect(calls.first).to.contain('builded');
