@@ -134,6 +134,7 @@ describe('fastdev-psql', () => {
       sinon.stub(instance.builder, 'on');
       sinon.stub(instance, 'console');
       sinon.stub(console, 'log');
+      sinon.stub(instance.spin, 'start');
       action = instance.log();
     });
 
@@ -141,6 +142,7 @@ describe('fastdev-psql', () => {
       instance.builder.on.restore();
       console.log.restore();
       instance.console.restore();
+      instance.spin.start.restore();
     });
 
     it('should return itself', () => {
@@ -172,8 +174,7 @@ describe('fastdev-psql', () => {
 
         calls = {
           first: instance.console.firstCall.args[0],
-          second: instance.console.secondCall.args[0],
-          third: instance.console.thirdCall.args[0]
+          second: instance.console.secondCall.args[0]
         };
 
         sinon.stub(instance.spin, 'stop');
@@ -184,15 +185,19 @@ describe('fastdev-psql', () => {
       });
 
       it('should pass message to the console for "complete" event', () => {
-        expect(calls.first).to.contain('builded');
+        expect(console.log.firstCall.args[0]).to.contain('builded');
+      });
+
+      it('should start spinner', () => {
+        expect(instance.spin.start).to.be.called;
       });
 
       it('should pass message to the console for "stopped and removed" event', () => {
-        expect(calls.second).to.contain('stopped and removed');
+        expect(calls.first).to.contain('stopped and removed');
       });
 
       it('should pass message to the console for "error" event', () => {
-        expect(calls.third).to.contain('Error');
+        expect(calls.second).to.contain('Error');
       });
 
       describe('"data" event', () => {

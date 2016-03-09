@@ -164,10 +164,13 @@ export default class PSQL {
    */
   log() {
     this.builder.on('complete', () => {
-      this.console(
+      console.log(
         `${chalk.green('>')}
         Container "${this.name}" ${chalk.green('builded')} `.replace(/\s+/g, ' ')
       );
+
+      // Start spin here, so it wouldn't intersect with `docker pull`
+      this.spin.start();
     });
 
     this.builder.on('stopped and removed', () => {
