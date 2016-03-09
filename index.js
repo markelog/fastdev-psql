@@ -1,3 +1,5 @@
+require('babel-polyfill');
+
 import { resolve } from 'path';
 import { copySync as copy } from 'fs-extra';
 
