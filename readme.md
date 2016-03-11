@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/markelog/fastdev-psql.svg?branch=master)](https://travis-ci.org/markelog/fastdev-psql)
-[![Coverage Status](https://coveralls.io/repos/github/markelog/fastdev-psql/badge.svg?branch=master&t=CdowK8)](https://coveralls.io/github/markelog/fastdev-psql?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/markelog/fastdev-psql/badge.svg?branch=master)](https://coveralls.io/github/markelog/fastdev-psql?branch=master)
 
 # Quickly start Postgres DB
 ## Use-case
