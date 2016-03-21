@@ -132,21 +132,25 @@ describe('fastdev-psql', () => {
     let action;
     beforeEach(() => {
       sinon.stub(instance.builder, 'on');
+      sinon.stub(instance, 'message');
       sinon.stub(instance, 'console');
-      sinon.stub(console, 'log');
       sinon.stub(instance.spin, 'start');
       action = instance.log();
     });
 
     afterEach(() => {
       instance.builder.on.restore();
-      console.log.restore();
+      instance.message.restore();
       instance.console.restore();
       instance.spin.start.restore();
     });
 
     it('should return itself', () => {
       expect(action).to.equal(instance);
+    });
+
+    it('should add callback for event "download"', () => {
+      expect(instance.builder.on).to.have.been.calledWith('download');
     });
 
     it('should add callback for event "complete"', () => {
@@ -168,16 +172,16 @@ describe('fastdev-psql', () => {
     describe('callbacks', () => {
       let calls;
       beforeEach(() => {
+        sinon.stub(instance.spin, 'stop');
         instance.builder.on.firstCall.args[1]();
         instance.builder.on.secondCall.args[1]();
         instance.builder.on.thirdCall.args[1]();
+        instance.builder.on.getCall(3).args[1]();
 
         calls = {
           first: instance.console.firstCall.args[0],
           second: instance.console.secondCall.args[0]
         };
-
-        sinon.stub(instance.spin, 'stop');
       });
 
       afterEach(() => {
@@ -185,11 +189,15 @@ describe('fastdev-psql', () => {
       });
 
       it('should pass message to the console for "complete" event', () => {
-        expect(console.log.firstCall.args[0]).to.contain('builded');
+        expect(instance.message.firstCall.args[0]).to.contain('builded');
+      });
+
+      it('should have called "spin.stop"', () => {
+        expect(instance.spin.stop).to.have.been.calledWith(true);
       });
 
       it('should start spinner', () => {
-        expect(instance.spin.start).to.be.called;
+        expect(instance.spin.start).to.have.been.called;
       });
 
       it('should pass message to the console for "stopped and removed" event', () => {
@@ -204,17 +212,17 @@ describe('fastdev-psql', () => {
         let message = 'PostgreSQL init process complete; ready for start up';
 
         it('should not pass message to the console for "data" event without needed string', () => {
-          instance.builder.on.getCall(3).args[1]('string');
-          expect(instance.console.getCall(3)).to.equal(null);
+          instance.builder.on.getCall(4).args[1]('string');
+          expect(instance.console.getCall(4)).to.equal(null);
         });
 
         it('should pass message to the console for "data" event with needed string', () => {
-          instance.builder.on.getCall(3).args[1](message);
-          expect(console.log).to.be.called;
+          instance.builder.on.getCall(4).args[1](message);
+          expect(instance.message).to.be.called;
         });
 
         it('should pass message to the console for "data" event with needed string', () => {
-          instance.builder.on.getCall(3).args[1](message);
+          instance.builder.on.getCall(4).args[1](message);
           expect(instance.spin.stop).to.be.calledWith(true);
         });
       });

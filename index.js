@@ -150,26 +150,38 @@ export default class PSQL {
    * @param {String} type - type of message, like "log" or "error"
    */
   console(message, type) {
-    type = type || 'log';
-
     this.spin.stop(true);
-    console[type](message);
+    this.message(message, type);
     this.spin.start();
 
     return this;
   }
 
   /**
+   * Message to stdout (easier to stub this in tests)
+   */
+  message(message, type) {
+    type = type || 'log';
+
+    console[type](message);
+  }
+
+  /**
    * Log all events into the console
    */
   log() {
+    this.spin.start();
+
+    // Stop spin here, so it wouldn't intersect with `docker pull`
+    this.builder.on('download', () => this.spin.stop(true));
+
     this.builder.on('complete', () => {
-      console.log(
+      this.message(
         `${chalk.green('>')}
         Container "${this.name}" ${chalk.green('builded')} `.replace(/\s+/g, ' ')
       );
 
-      // Start spin here, so it wouldn't intersect with `docker pull`
+      // Re-start spin here, so it wouldn't intersect with `docker pull`
       this.spin.start();
     });
 
@@ -195,7 +207,7 @@ export default class PSQL {
 
       this.spin.stop(true);
 
-      console.log(
+      this.message(
         `${chalk.green('>')}
         Container "${this.name}"
         ${chalk.green('started')}\n`.replace(/\s+/g, ' ')
