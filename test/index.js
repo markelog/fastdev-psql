@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 import sinon from 'sinon';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
@@ -33,6 +35,31 @@ describe('fastdev-psql', () => {
         POSTGRES_PASSWORD: 'test-pass',
         POSTGRES_DB: 'test-db'
       });
+    });
+  });
+
+  describe('Execution flow', () => {
+    let action;
+
+    beforeEach(() => {
+      instance.builder = new EventEmitter();
+      sinon.stub(instance, 'prepare');
+      instance.builder.up = () => new Promise(resolve => resolve());
+
+      action = instance.up();
+    });
+
+    afterEach(() => {
+      instance.prepare.restore();
+    });
+
+    it('should resolve "up" promise', () => {
+      instance.builder.emit(
+        'data',
+        'PostgreSQL init process complete; ready for start up'
+      );
+
+      return action;
     });
   });
 

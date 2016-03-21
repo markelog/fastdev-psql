@@ -117,8 +117,17 @@ export default class PSQL {
    */
   up() {
     this.prepare();
+    const promise = this.builder.up().then(() => this[defer].promise());
 
-    return this.builder.up().then(() => this[defer].promise());
+    this.builder.on('data', data => {
+      if (!~data.indexOf('PostgreSQL init process complete; ready for start up')) {
+        return;
+      }
+
+      this[defer].resolve();
+    });
+
+    return promise;
   }
 
   /**
@@ -212,8 +221,6 @@ export default class PSQL {
         Container "${this.name}"
         ${chalk.green('started')}\n`.replace(/\s+/g, ' ')
       );
-
-      this[defer].resolve();
     });
 
     return this;
