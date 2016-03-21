@@ -96,7 +96,7 @@ describe('fastdev-psql', () => {
     });
 
     it('should start spinner', () => {
-      expect(instance.spin.start).to.have.been.called;
+      expect(instance.spin.start).to.not.have.been.called;
     });
 
     it('should build up', () => {
