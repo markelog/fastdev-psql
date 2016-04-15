@@ -97,6 +97,40 @@ describe('fastdev-psql', () => {
       expect(target).to.equal('#!/bin/bash \n\npsql -d ' +
         `${instance.database} -U postgres -f /dump.sql`);
     });
+
+    describe('when there is no "dump" option', () => {
+      beforeEach(() => {
+        instance = new PSQL({
+          name: 'test-psql',
+          port: 9999,
+          user: 'test-user',
+          password: 'test-pass',
+          db: 'test-db'
+        });
+
+        PSQL.copy.restore();
+        PSQL.write.restore();
+
+        sinon.stub(PSQL, 'copy');
+        sinon.stub(PSQL, 'write');
+
+        instance.prepare();
+      });
+
+      it('should copy dockerfile', () => {
+        expect(PSQL.copy.firstCall.args[0]).to.contain('Dockerfile');
+        expect(PSQL.copy.firstCall.args[1]).to.contain('Dockerfile');
+      });
+
+      it('should write empty dump', () => {
+        expect(PSQL.write.firstCall.args[0]).to.contain('dump.sql');
+        expect(PSQL.write.firstCall.args[1]).to.be.empty;
+      });
+
+      it('should write exec command dump', () => {
+        expect(PSQL.write.secondCall.args[1]).to.be.empty;
+      });
+    });
   });
 
   describe('PSQL#up', () => {

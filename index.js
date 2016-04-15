@@ -57,9 +57,15 @@ export default class PSQL {
 
     /**
      * Path to the sql dump
-     * @type {String}
+     * @type {String | null}
      */
-    this.dump = resolve(opts.dump);
+    this.dump = 'dump' in opts ? resolve(opts.dump) : null;
+
+    /**
+     * Shell command that will be executed after
+     * @type {[type]}
+     */
+    this.command = opts.command;
 
     /**
      * Environment variables
@@ -134,12 +140,21 @@ export default class PSQL {
    * Copy dump and image, prepare make.sh
    */
   prepare() {
-    const makeTxt = `#!/bin/bash \n\npsql -d ${this.database} -U postgres -f /dump.sql`;
+    let command = `#!/bin/bash \n\npsql -d ${this.database} -U postgres -f /dump.sql`
 
-    PSQL.copy(this.dump, this[copies].dump);
     PSQL.copy(image, this[copies].image);
 
-    PSQL.write(this[copies].make, makeTxt, 'utf8');
+    // Copy real dump
+    if (this.dump) {
+      PSQL.copy(this.dump, this[copies].dump);
+
+    // Just stub the whole thing
+    } else {
+      command = '';
+      PSQL.write(this[copies].dump, '', 'utf8');
+    }
+
+    PSQL.write(this[copies].make, command, 'utf8');
 
     return this;
   }
