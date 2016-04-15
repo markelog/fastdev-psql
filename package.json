@@ -6,7 +6,6 @@
   "scripts": {
     "build": "babel index.js -d dist",
     "watch": "chokidar index.js -c 'npm run build'",
-    "watch-test": "mocha --watch",
     "lint": "npm run eslint && npm run jscs",
     "jscs": "jscs index.js test",
     "eslint": "eslint index.js test",
