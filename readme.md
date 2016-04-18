@@ -7,6 +7,8 @@ You need to quickly spin postgres and you don't afraid to use docker.
 
 ## Usage
 ```js
+import PSQL from 'fastdev-psql';
+
 let psql = new PSQL({
   name: 'test-psql', // Name of the container
   port: 9999, // Host port
