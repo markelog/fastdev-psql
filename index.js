@@ -140,7 +140,7 @@ export default class PSQL {
    * Copy dump and image, prepare make.sh
    */
   prepare() {
-    let command = `#!/bin/bash \n\npsql -d ${this.database} -U postgres -f /dump.sql`
+    let command = `#!/bin/bash \n\npsql -d ${this.database} -U postgres -f /dump.sql`;
 
     PSQL.copy(image, this[copies].image);
 
