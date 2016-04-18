@@ -3,7 +3,7 @@
 
 # Quickly start Postgres DB
 ## Use-case
-You need to quickly spin the postgres db up and you don't afraid of using docker.
+You need to quickly spin postgres and you don't afraid to use docker.
 
 ## Usage
 ```js
