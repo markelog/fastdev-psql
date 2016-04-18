@@ -3,7 +3,7 @@
 
 # Quickly start Postgres DB
 ## Use-case
-You have a postgres dump and installed docker. You need to quickly create database with that dump through node API -
+You need to quickly spin the postgres db up and you don't afraid of using docker.
 
 ## Usage
 ```js
@@ -13,8 +13,8 @@ let psql = new PSQL({
   user: 'test-user', // Database user
   password: 'test-pass', // Database password
   db: 'test-db', // Database name
-  dump: `${__dirname}/dump.sql` // dump
-})
+  dump: `${__dirname}/dump.sql` // dump (optional)
+});
 
 psql.pump(); // Pump **all** info into stdout
 
