@@ -22,7 +22,5 @@ psql.pump(); // Pump **all** info into stdout
 
 psql.log(); // Show "pretty" output
 
-psql.up(() => {
-  console.log('done and done');
-});
+psql.up().then(() => console.log('done and done'));
 ```
