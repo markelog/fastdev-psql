@@ -125,13 +125,26 @@ export default class PSQL {
     this.prepare();
     const promise = this.builder.up().then(() => this[defer].promise());
 
-    this.builder.on('data', data => {
+    let listener = (data) => {
+      if (~data.indexOf('No space left on device')) {
+        const message = `No volume space, execute –
+          "$ docker volume rm $(docker volume ls -qf dangling=true)"`;
+
+        this.builder.removeListener('data', listener);
+        this.builder.emit('error', message);
+        this[defer].reject(message);
+        return;
+      }
+
       if (!~data.indexOf('PostgreSQL init process complete; ready for start up')) {
         return;
       }
 
+      this.builder.removeListener('data', listener);
       this[defer].resolve();
-    });
+    };
+
+    this.builder.on('data', listener);
 
     return promise;
   }
@@ -222,6 +235,9 @@ export default class PSQL {
         Error with "${this.name}" - ${error}`.replace(/\s+/g, ' '),
         'error'
       );
+
+      this.spin.stop(true);
+      this[defer].reject();
     });
 
     this.builder.on('data', data => {

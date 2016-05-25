@@ -44,7 +44,11 @@ describe('fastdev-psql', () => {
     beforeEach(() => {
       instance.builder = new EventEmitter();
       sinon.stub(instance, 'prepare');
+      sinon.stub(instance.builder, 'removeListener');
       instance.builder.up = () => new Promise(resolve => resolve());
+
+      instance.builder.on('error', () => {});
+      sinon.spy(instance.builder, 'emit');
 
       action = instance.up();
     });
@@ -59,7 +63,21 @@ describe('fastdev-psql', () => {
         'PostgreSQL init process complete; ready for start up'
       );
 
+      expect(instance.builder.removeListener).calledWith('data');
+
       return action;
+    });
+
+    it('should reject promise and emit the error', () => {
+      instance.builder.emit(
+        'data',
+        'FATAL:  could not extend file "base/1/2658": No space left on device'
+      );
+
+      expect(instance.builder.emit).calledWith('error');
+      expect(instance.builder.removeListener).calledWith('data');
+
+      return action.catch(() => {});
     });
   });
 
