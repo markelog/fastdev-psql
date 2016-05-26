@@ -54,6 +54,7 @@
     "coveralls": "^2.11.8",
     "eslint": "2.10.2",
     "eslint-config-airbnb-base": "3.0.1",
+    "eslint-plugin-import": "^1.8.1",
     "gaze-cli": "^0.2.0",
     "istanbul": "^1.0.0-alpha.2",
     "jscs": "^2.11.0",
