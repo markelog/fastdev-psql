@@ -1,8 +1,9 @@
 {
+  "root": true,
   "extends": "../.eslintrc",
   "env": {
-        "mocha": true
-    },
+    "mocha": true
+  },
   "rules": {
     "arrow-body-style": [0],
     "no-shadow": [0],

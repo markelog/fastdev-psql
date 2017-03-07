@@ -7,7 +7,7 @@ import sinonChai from 'sinon-chai';
 import PSQL from '../index.js';
 
 chai.use(sinonChai);
-let expect = chai.expect;
+const expect = chai.expect;
 
 describe('fastdev-psql', () => {
   let instance;
@@ -111,7 +111,7 @@ describe('fastdev-psql', () => {
     });
 
     it('should have been called with correct arguments', () => {
-      let target = PSQL.write.firstCall.args[1];
+      const target = PSQL.write.firstCall.args[1];
       expect(target).to.equal('#!/bin/bash \n\npsql -d ' +
         `${instance.database} -U postgres -f /dump.sql`);
     });
@@ -288,7 +288,7 @@ describe('fastdev-psql', () => {
       });
 
       describe('"data" event', () => {
-        let message = 'PostgreSQL init process complete; ready for start up';
+        const message = 'PostgreSQL init process complete; ready for start up';
 
         it('should not pass message to the console for "data" event without needed string', () => {
           instance.builder.on.getCall(4).args[1]('string');
