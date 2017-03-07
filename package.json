@@ -1,6 +1,6 @@
 {
   "name": "fastdev-psql",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Quickly set up psql instance",
   "main": "dist/index.js",
   "scripts": {
