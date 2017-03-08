@@ -64,8 +64,15 @@ describe('fastdev-psql', () => {
       );
 
       expect(instance.builder.removeListener).calledWith('data');
+    });
 
-      return action;
+    it('should not resolve "up" promise', () => {
+      instance.builder.emit(
+        'data',
+        'test'
+      );
+
+      expect(instance.builder.removeListener).not.called;
     });
 
     it('should reject promise and emit the error', () => {
