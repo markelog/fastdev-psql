@@ -8,6 +8,8 @@ import vow from 'vow';
 import { Spinner } from 'cli-spinner';
 import { dirSync as dir } from 'tmp';
 
+import tty from 'tty';
+
 const image = `${__dirname}/../images/Dockerfile`;
 
 const defer = Symbol();
@@ -116,12 +118,11 @@ export default class PSQL {
     this.spin = new Spinner(`${chalk.blue('>')} Docking... ${chalk.blue('%s')}`);
     this.spin.setSpinnerString('|/-\\');
     const old = this.spin.start;
-    this.spin.start = () {
+    this.spin.start = () => {
       if (tty.isatty(process.stdout.fd)) {
-        old()
+        old();
       }
-    }
-
+    };
   }
 
   /**
