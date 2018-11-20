@@ -4,10 +4,10 @@ import sinon from 'sinon';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 
-import PSQL from '../index.js';
+import PSQL from '..';
 
 chai.use(sinonChai);
-const expect = chai.expect;
+const { expect } = chai;
 
 describe('fastdev-psql', () => {
   let instance;
@@ -119,8 +119,8 @@ describe('fastdev-psql', () => {
 
     it('should have been called with correct arguments', () => {
       const target = PSQL.write.firstCall.args[1];
-      expect(target).to.equal('#!/bin/bash \n\npsql -d ' +
-        `${instance.database} -U postgres -f /dump.sql`);
+      expect(target).to.equal('#!/bin/bash \n\npsql -d '
+      + `${instance.database} -U postgres -f /dump.sql`);
     });
 
     describe('when there is no "dump" option', () => {
