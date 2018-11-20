@@ -118,9 +118,9 @@ export default class PSQL {
     this.spin = new Spinner(`${chalk.blue('>')} Docking... ${chalk.blue('%s')}`);
     this.spin.setSpinnerString('|/-\\');
     const old = this.spin.start;
-    this.spin.start = () => {
+    this.spin.start = (...args) => {
       if (tty.isatty(process.stdout.fd)) {
-        old();
+        return old.apply(this, args);
       }
     };
   }
