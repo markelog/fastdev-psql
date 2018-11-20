@@ -120,7 +120,7 @@ export default class PSQL {
     const old = this.spin.start;
     this.spin.start = (...args) => {
       if (tty.isatty(process.stdout.fd)) {
-        return old.apply(this, args);
+        return old.apply(this.spin, args);
       }
     };
   }
